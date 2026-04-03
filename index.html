@@ -1,138 +1,279 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Botela Recipe</title>
+<title>BOTELA SUPER MANAGER</title>
+
+<!-- GOOGLE FONTS -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<!-- CHART.JS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-body{
-font-family: Arial;
-background:#0f172a;
-color:white;
-text-align:center;
-padding:20px;
+body {
+    font-family: 'Inter', sans-serif;
+    background: #0f172a;
+    color: white;
+    margin: 0;
+    padding: 20px;
+    text-align: center;
 }
 
-h1{color:#22c55e;}
-
-input{
-width:80%;
-padding:14px;
-font-size:18px;
-border-radius:10px;
-border:none;
-margin-top:10px;
-text-align:center;
+h1 {
+    color: #22c55e;
+    margin-bottom: 10px;
 }
 
-button{
-width:90%;
-padding:15px;
-margin:10px;
-font-size:18px;
-border:none;
-border-radius:12px;
-background:#22c55e;
-color:white;
+.container {
+    max-width: 430px;
+    margin: auto;
 }
 
-.result{
-margin-top:20px;
-padding:20px;
-background:#1e293b;
-border-radius:12px;
-font-size:18px;
+.card {
+    background: #1e293b;
+    padding: 15px;
+    border-radius: 14px;
+    margin-bottom: 12px;
+}
+
+.product-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+}
+
+.product-name {
+    font-size: 18px;
+    font-weight: 600;
+    width: 100px;
+    text-align: left;
+}
+
+.qty-box {
+    font-size: 20px;
+    padding: 5px 15px;
+    background: #0f172a;
+    border-radius: 8px;
+    min-width: 45px;
+}
+
+.btn {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 10px;
+    background: #22c55e;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.btn-danger {
+    background: #c0392b;
+}
+
+.btn-full {
+    width: 100%;
+    margin-top: 10px;
+}
+
+canvas {
+    margin-top: 15px;
 }
 </style>
 </head>
 
 <body>
 
-<h1>BOTELA RECIPE</h1>
+<h1>BOTELA MANAGER</h1>
+<p>Versi Website Modern</p>
 
-<input type="number" id="botol" placeholder="Jumlah botol">
+<div class="container">
 
-<br>
+    <!-- PRODUK LIST -->
+    <div class="card">
+        <h3>Produk Terjual</h3>
 
-<button onclick="hitung('americano')">☕ Americano</button>
-<button onclick="hitung('matcha')">🍵 Matcha</button>
-<button onclick="hitung('kopisusu')">🥛 Kopi Susu Gula Aren</button>
+        <div class="product-row">
+            <div class="product-name">AMERICANO</div>
+            <button class="btn" onclick="kurang('americano')">−</button>
+            <div id="qty-americano" class="qty-box">0</div>
+            <button class="btn" onclick="tambah('americano')">+</button>
+        </div>
 
-<div class="result" id="hasil">Masukkan jumlah botol lalu pilih minuman</div>
+        <div class="product-row">
+            <div class="product-name">KOPI SUSU</div>
+            <button class="btn" onclick="kurang('kopisusu')">−</button>
+            <div id="qty-kopisusu" class="qty-box">0</div>
+            <button class="btn" onclick="tambah('kopisusu')">+</button>
+        </div>
+
+        <div class="product-row">
+            <div class="product-name">MATCHa</div>
+            <button class="btn" onclick="kurang('matcha')">−</button>
+            <div id="qty-matcha" class="qty-box">0</div>
+            <button class="btn" onclick="tambah('matcha')">+</button>
+        </div>
+
+    </div>
+
+    <!-- LAPORAN -->
+    <button class="btn btn-full" onclick="laporan()">Lihat Laporan</button>
+    <button class="btn btn-full" onclick="showDashboard()">Dashboard Omzet Harian</button>
+    <button class="btn btn-danger btn-full" onclick="resetData()">Reset Data</button>
+
+    <canvas id="chartOmzet" style="display:none;"></canvas>
+
+</div>
 
 <script>
+// =============================
+// DATABASE
+// =============================
+let penjualan = JSON.parse(localStorage.getItem("penjualan")) || {
+    americano: 0,
+    kopisusu: 0,
+    matcha: 0
+};
 
-function hitung(menu){
+let riwayat = JSON.parse(localStorage.getItem("riwayat")) || [];
 
-let botol = Number(document.getElementById("botol").value)
+// Harga Jual
+const HARGA_JUAL = {
+    americano: 12000,
+    kopisusu: 15000,
+    matcha: 15000
+};
 
-if(botol <= 0){
-document.getElementById("hasil").innerHTML="Masukkan jumlah botol dulu!"
-return
+// HPP
+const HPP = {
+    americano: 3000,
+    kopisusu: 6700,
+    matcha: 5300
+};
+
+// =============================
+// UPDATE UI
+// =============================
+function refreshUI() {
+    document.getElementById("qty-americano").innerText = penjualan.americano;
+    document.getElementById("qty-kopisusu").innerText = penjualan.kopisusu;
+    document.getElementById("qty-matcha").innerText = penjualan.matcha;
 }
 
-let hasil=""
+refreshUI();
 
-if(menu==="americano"){
-
-let kopi = botol*3
-let air = botol*250
-
-hasil=`
-<h2>☕ Americano</h2>
-Jumlah botol: ${botol}<br><br>
-Kopi bubuk: ${kopi} gram<br>
-Air panas: ${air} ml
-`
-
+// =============================
+// PLUS MINUS BUTTON
+// =============================
+function tambah(p) {
+    penjualan[p]++;
+    save();
 }
 
-if(menu==="matcha"){
-
-let matcha = botol*20
-let skm = botol*4
-let susu = botol*150
-let air = botol*80
-
-hasil=`
-<h2>🍵 Matcha</h2>
-Jumlah botol: ${botol}<br><br>
-Matcha: ${matcha} gram<br>
-SKM: ${skm} ml<br>
-Susu UHT: ${susu} ml<br>
-Air panas: ${air} ml
-`
-
+function kurang(p) {
+    if (penjualan[p] > 0) penjualan[p]--;
+    save();
 }
 
-if(menu==="kopisusu"){
-
-let kopi = botol*3
-let air = botol*120
-let susu = botol*120
-let skm = botol*8
-let creamer = botol*3
-let gula = botol*8
-
-hasil=`
-<h2>🥛 Kopi Susu Gula Aren</h2>
-Jumlah botol: ${botol}<br><br>
-Kopi bubuk: ${kopi} gram<br>
-Air panas: ${air} ml<br>
-Susu UHT: ${susu} ml<br>
-SKM: ${skm} ml<br>
-Creamer: ${creamer} gram<br>
-Gula aren: ${gula} gram
-`
-
+function save() {
+    localStorage.setItem("penjualan", JSON.stringify(penjualan));
+    refreshUI();
 }
 
-document.getElementById("hasil").innerHTML=hasil
+// =============================
+// LAPORAN
+// =============================
+function laporan() {
+    let totalOmzet = 0;
+    let totalModal = 0;
+    let text = "";
 
+    for (let p in penjualan) {
+        let qty = penjualan[p];
+        let omzet = qty * HARGA_JUAL[p];
+        let modal = qty * HPP[p];
+        let profit = omzet - modal;
+
+        totalOmzet += omzet;
+        totalModal += modal;
+
+        text += `\n${p.toUpperCase()}:\n`;
+        text += `  Terjual: ${qty}\n`;
+        text += `  Omzet : Rp${omzet.toLocaleString()}\n`;
+        text += `  Modal : Rp${modal.toLocaleString()}\n`;
+        text += `  Profit: Rp${profit.toLocaleString()}\n\n`;
+    }
+
+    let totalProfit = totalOmzet - totalModal;
+    let pribadi = parseInt(totalProfit * 0.30);
+    let modalPutar = totalProfit - pribadi;
+
+    text += "====== TOTAL ======\n";
+    text += `Total Omzet : Rp${totalOmzet.toLocaleString()}\n`;
+    text += `Total Modal : Rp${totalModal.toLocaleString()}\n`;
+    text += `Total Profit: Rp${totalProfit.toLocaleString()}\n\n`;
+
+    text += "====== PEMBAGIAN ======\n";
+    text += `Modal (70%): Rp${modalPutar.toLocaleString()}\n`;
+    text += `Pribadi (30%): Rp${pribadi.toLocaleString()}\n`;
+
+    if (totalOmzet > 0) {
+        let today = new Date();
+        let tgl = today.getDate() + "/" + (today.getMonth()+1);
+        riwayat.push({tgl: tgl, omzet: totalOmzet});
+        localStorage.setItem("riwayat", JSON.stringify(riwayat));
+    }
+
+    alert(text);
 }
 
+// =============================
+// RESET DATA
+// =============================
+function resetData() {
+    if (!confirm("Reset semua data?")) return;
+
+    penjualan = { americano:0, kopisusu:0, matcha:0 };
+    riwayat = [];
+
+    localStorage.setItem("penjualan", JSON.stringify(penjualan));
+    localStorage.setItem("riwayat", JSON.stringify(riwayat));
+
+    refreshUI();
+    alert("Data berhasil direset!");
+}
+
+// =============================
+// DASHBOARD
+// =============================
+function showDashboard() {
+
+    if (riwayat.length === 0) {
+        alert("Belum ada data omzet.");
+        return;
+    }
+
+    const tgl = riwayat.map(x => x.tgl);
+    const omzet = riwayat.map(x => x.omzet);
+
+    document.getElementById("chartOmzet").style.display = "block";
+
+    new Chart(document.getElementById("chartOmzet"), {
+        type: 'line',
+        data: {
+            labels: tgl,
+            datasets: [{
+                label: 'Omzet Harian',
+                data: omzet,
+                borderWidth: 3
+            }]
+        }
+    });
+}
 </script>
 
 </body>
-
 </html>
