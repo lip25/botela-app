@@ -20,7 +20,6 @@ body {
 h1 {
     text-align: center;
     font-size: 22px;
-    margin-bottom: 20px;
 }
 
 .container {
@@ -39,7 +38,7 @@ h1 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 10px 0;
+    margin: 12px 0;
 }
 
 .name {
@@ -48,8 +47,8 @@ h1 {
 
 .controls {
     display: flex;
-    align-items: center;
     gap: 10px;
+    align-items: center;
 }
 
 .qty {
@@ -62,9 +61,9 @@ button {
     border: none;
     border-radius: 10px;
     padding: 6px 12px;
-    font-size: 18px;
     background: #2c2c2e;
     color: white;
+    font-size: 18px;
 }
 
 button:active {
@@ -85,9 +84,8 @@ button:active {
 }
 
 .result {
-    font-size: 14px;
-    line-height: 1.6;
     white-space: pre-line;
+    font-size: 14px;
 }
 </style>
 </head>
@@ -139,28 +137,36 @@ Belum ada transaksi
 </div>
 
 <script>
-// DATA
+
+// ================= DATA =================
 let data = JSON.parse(localStorage.getItem("data")) || {
     americano: 0,
     kopisusu: 0,
     matcha: 0
 };
 
-// HARGA
+// ================= HARGA =================
 const HARGA = {
     americano: 12000,
     kopisusu: 15000,
     matcha: 15000
 };
 
-// HPP FINAL
+// ================= HPP ASLI =================
 const HPP = {
     americano: 3000,
     kopisusu: 7900,
     matcha: 6100
 };
 
-// UPDATE UI
+// ================= MODAL AMAN (HPP +15%) =================
+const MODAL = {
+    americano: 3500,
+    kopisusu: 9100,
+    matcha: 7100
+};
+
+// ================= UI =================
 function updateUI() {
     document.getElementById("americano").innerText = data.americano;
     document.getElementById("kopisusu").innerText = data.kopisusu;
@@ -168,7 +174,7 @@ function updateUI() {
 }
 updateUI();
 
-// BUTTON
+// ================= CONTROL =================
 function tambah(p) {
     data[p]++;
     save();
@@ -182,50 +188,53 @@ function save() {
     updateUI();
 }
 
-// HITUNG
+// ================= HITUNG =================
 function hitung() {
     let omzet = 0;
     let modal = 0;
+    let profit = 0;
+
     let text = "";
 
     for (let p in data) {
         let qty = data[p];
+
         let o = qty * HARGA[p];
-        let m = qty * HPP[p];
-        let profit = o - m;
+        let m = qty * MODAL[p];
+        let hpp = qty * HPP[p];
+        let pft = o - hpp;
 
         omzet += o;
         modal += m;
+        profit += pft;
 
         text += `${p.toUpperCase()}
 Qty: ${qty}
 Omzet: Rp${o.toLocaleString()}
-Modal: Rp${m.toLocaleString()}
-Profit: Rp${profit.toLocaleString()}
+Modal Aman: Rp${m.toLocaleString()}
+Profit Real: Rp${pft.toLocaleString()}
 
 `;
     }
 
-    let totalProfit = omzet - modal;
-
     text += `TOTAL OMZET: Rp${omzet.toLocaleString()}
-TOTAL MODAL: Rp${modal.toLocaleString()}
-TOTAL PROFIT: Rp${totalProfit.toLocaleString()}
-
-MODAL WAJIB DISIMPAN:
-Rp${modal.toLocaleString()}
+MODAL WAJIB DISIMPAN: Rp${modal.toLocaleString()}
+PROFIT BERSIH: Rp${profit.toLocaleString()}
 `;
 
     document.getElementById("hasil").innerText = text;
 }
 
-// RESET
+// ================= RESET =================
 function reset() {
     if (!confirm("Reset data?")) return;
+
     data = {americano:0,kopisusu:0,matcha:0};
     save();
+
     document.getElementById("hasil").innerText = "Data direset";
 }
+
 </script>
 
 </body>
