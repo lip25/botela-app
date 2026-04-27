@@ -3,248 +3,228 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>BOTELA SUPER MANAGER</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<title>BOTELA MANAGER</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
 body {
     font-family: 'Inter', sans-serif;
-    background: #0f172a;
-    color: white;
+    background: #000;
+    color: #fff;
     margin: 0;
     padding: 20px;
-    text-align: center;
 }
-h1 { color: #22c55e; }
-.container { max-width: 430px; margin: auto; }
+
+h1 {
+    text-align: center;
+    font-size: 22px;
+    margin-bottom: 20px;
+}
+
+.container {
+    max-width: 420px;
+    margin: auto;
+}
+
 .card {
-    background: #1e293b;
+    background: #1c1c1e;
+    border-radius: 16px;
     padding: 15px;
-    border-radius: 14px;
     margin-bottom: 12px;
 }
-.product-row {
+
+.product {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 0;
+    margin: 10px 0;
 }
-.product-name {
-    font-size: 18px;
+
+.name {
     font-weight: 600;
-    width: 110px;
-    text-align: left;
 }
-.qty-box {
-    font-size: 20px;
-    padding: 5px 15px;
-    background: #0f172a;
-    border-radius: 8px;
-    min-width: 45px;
+
+.controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
-.btn {
-    padding: 8px 14px;
+
+.qty {
+    min-width: 30px;
+    text-align: center;
+    font-size: 18px;
+}
+
+button {
     border: none;
     border-radius: 10px;
-    background: #22c55e;
-    color: white;
+    padding: 6px 12px;
     font-size: 18px;
-    cursor: pointer;
+    background: #2c2c2e;
+    color: white;
 }
-.btn-danger { background: #c0392b; }
-.btn-full { width: 100%; margin-top: 10px; }
-canvas { margin-top: 15px; }
+
+button:active {
+    opacity: 0.7;
+}
+
+.primary {
+    background: #0a84ff;
+}
+
+.danger {
+    background: #ff3b30;
+}
+
+.full {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.result {
+    font-size: 14px;
+    line-height: 1.6;
+    white-space: pre-line;
+}
 </style>
 </head>
 
 <body>
 
 <h1>BOTELA MANAGER</h1>
-<p>Versi Final HPP Akurat</p>
 
 <div class="container">
 
 <div class="card">
-<h3>Produk Terjual</h3>
 
-<div class="product-row">
-<div class="product-name">AMERICANO</div>
-<button class="btn" onclick="kurang('americano')">−</button>
-<div id="qty-americano" class="qty-box">0</div>
-<button class="btn" onclick="tambah('americano')">+</button>
+<div class="product">
+<div class="name">Americano</div>
+<div class="controls">
+<button onclick="kurang('americano')">−</button>
+<div id="americano" class="qty">0</div>
+<button onclick="tambah('americano')">+</button>
+</div>
 </div>
 
-<div class="product-row">
-<div class="product-name">KOPI SUSU</div>
-<button class="btn" onclick="kurang('kopisusu')">−</button>
-<div id="qty-kopisusu" class="qty-box">0</div>
-<button class="btn" onclick="tambah('kopisusu')">+</button>
+<div class="product">
+<div class="name">Kopi Susu</div>
+<div class="controls">
+<button onclick="kurang('kopisusu')">−</button>
+<div id="kopisusu" class="qty">0</div>
+<button onclick="tambah('kopisusu')">+</button>
+</div>
 </div>
 
-<div class="product-row">
-<div class="product-name">MATCHA</div>
-<button class="btn" onclick="kurang('matcha')">−</button>
-<div id="qty-matcha" class="qty-box">0</div>
-<button class="btn" onclick="tambah('matcha')">+</button>
+<div class="product">
+<div class="name">Matcha</div>
+<div class="controls">
+<button onclick="kurang('matcha')">−</button>
+<div id="matcha" class="qty">0</div>
+<button onclick="tambah('matcha')">+</button>
+</div>
 </div>
 
 </div>
 
-<button class="btn btn-full" onclick="laporan()">Lihat Laporan</button>
-<button class="btn btn-full" onclick="showDashboard()">Dashboard Omzet Harian</button>
-<button class="btn btn-danger btn-full" onclick="resetData()">Reset Data</button>
+<div class="card result" id="hasil">
+Belum ada transaksi
+</div>
 
-<canvas id="chartOmzet" style="display:none;"></canvas>
+<button class="primary full" onclick="hitung()">Hitung</button>
+<button class="danger full" onclick="reset()">Reset</button>
 
 </div>
 
 <script>
-// =============================
-// DATABASE
-// =============================
-let penjualan = JSON.parse(localStorage.getItem("penjualan")) || {
+// DATA
+let data = JSON.parse(localStorage.getItem("data")) || {
     americano: 0,
     kopisusu: 0,
     matcha: 0
 };
 
-let riwayat = JSON.parse(localStorage.getItem("riwayat")) || [];
-
-// =============================
-// HARGA JUAL
-// =============================
-const HARGA_JUAL = {
+// HARGA
+const HARGA = {
     americano: 12000,
     kopisusu: 15000,
     matcha: 15000
 };
 
-// =============================
-// HPP FINAL (SUDAH TERMASUK AIR)
-// =============================
+// HPP FINAL
 const HPP = {
     americano: 3000,
     kopisusu: 7900,
     matcha: 6100
 };
 
-// =============================
 // UPDATE UI
-// =============================
-function refreshUI() {
-    document.getElementById("qty-americano").innerText = penjualan.americano;
-    document.getElementById("qty-kopisusu").innerText = penjualan.kopisusu;
-    document.getElementById("qty-matcha").innerText = penjualan.matcha;
+function updateUI() {
+    document.getElementById("americano").innerText = data.americano;
+    document.getElementById("kopisusu").innerText = data.kopisusu;
+    document.getElementById("matcha").innerText = data.matcha;
 }
-refreshUI();
+updateUI();
 
-// =============================
-// BUTTON CONTROL
-// =============================
+// BUTTON
 function tambah(p) {
-    penjualan[p]++;
+    data[p]++;
     save();
 }
 function kurang(p) {
-    if (penjualan[p] > 0) penjualan[p]--;
+    if (data[p] > 0) data[p]--;
     save();
 }
 function save() {
-    localStorage.setItem("penjualan", JSON.stringify(penjualan));
-    refreshUI();
+    localStorage.setItem("data", JSON.stringify(data));
+    updateUI();
 }
 
-// =============================
-// LAPORAN
-// =============================
-function laporan() {
-    let totalOmzet = 0;
-    let totalModal = 0;
+// HITUNG
+function hitung() {
+    let omzet = 0;
+    let modal = 0;
     let text = "";
 
-    for (let p in penjualan) {
-        let qty = penjualan[p];
-        let omzet = qty * HARGA_JUAL[p];
-        let modal = qty * HPP[p];
-        let profit = omzet - modal;
+    for (let p in data) {
+        let qty = data[p];
+        let o = qty * HARGA[p];
+        let m = qty * HPP[p];
+        let profit = o - m;
 
-        totalOmzet += omzet;
-        totalModal += modal;
+        omzet += o;
+        modal += m;
 
-        text += `\n${p.toUpperCase()}:\n`;
-        text += `Terjual: ${qty}\n`;
-        text += `Omzet : Rp${omzet.toLocaleString()}\n`;
-        text += `Modal : Rp${modal.toLocaleString()}\n`;
-        text += `Profit: Rp${profit.toLocaleString()}\n\n`;
+        text += `${p.toUpperCase()}
+Qty: ${qty}
+Omzet: Rp${o.toLocaleString()}
+Modal: Rp${m.toLocaleString()}
+Profit: Rp${profit.toLocaleString()}
+
+`;
     }
 
-    let totalProfit = totalOmzet - totalModal;
-    let pribadi = Math.floor(totalProfit * 0.30);
-    let modalPutar = totalProfit - pribadi;
+    let totalProfit = omzet - modal;
 
-    text += "====== TOTAL ======\n";
-    text += `Total Omzet : Rp${totalOmzet.toLocaleString()}\n`;
-    text += `Total Modal : Rp${totalModal.toLocaleString()}\n`;
-    text += `Total Profit: Rp${totalProfit.toLocaleString()}\n\n`;
+    text += `TOTAL OMZET: Rp${omzet.toLocaleString()}
+TOTAL MODAL: Rp${modal.toLocaleString()}
+TOTAL PROFIT: Rp${totalProfit.toLocaleString()}
 
-    text += "====== PEMBAGIAN ======\n";
-    text += `Modal (70%): Rp${modalPutar.toLocaleString()}\n`;
-    text += `Pribadi (30%): Rp${pribadi.toLocaleString()}\n`;
+MODAL WAJIB DISIMPAN:
+Rp${modal.toLocaleString()}
+`;
 
-    if (totalOmzet > 0) {
-        let today = new Date();
-        let tgl = today.getDate() + "/" + (today.getMonth()+1);
-        riwayat.push({tgl: tgl, omzet: totalOmzet});
-        localStorage.setItem("riwayat", JSON.stringify(riwayat));
-    }
-
-    alert(text);
+    document.getElementById("hasil").innerText = text;
 }
 
-// =============================
 // RESET
-// =============================
-function resetData() {
-    if (!confirm("Reset semua data?")) return;
-
-    penjualan = { americano:0, kopisusu:0, matcha:0 };
-    riwayat = [];
-
-    localStorage.setItem("penjualan", JSON.stringify(penjualan));
-    localStorage.setItem("riwayat", JSON.stringify(riwayat));
-
-    refreshUI();
-    alert("Data berhasil direset!");
-}
-
-// =============================
-// DASHBOARD
-// =============================
-function showDashboard() {
-
-    if (riwayat.length === 0) {
-        alert("Belum ada data omzet.");
-        return;
-    }
-
-    const tgl = riwayat.map(x => x.tgl);
-    const omzet = riwayat.map(x => x.omzet);
-
-    document.getElementById("chartOmzet").style.display = "block";
-
-    new Chart(document.getElementById("chartOmzet"), {
-        type: 'line',
-        data: {
-            labels: tgl,
-            datasets: [{
-                label: 'Omzet Harian',
-                data: omzet,
-                borderWidth: 3
-            }]
-        }
-    });
+function reset() {
+    if (!confirm("Reset data?")) return;
+    data = {americano:0,kopisusu:0,matcha:0};
+    save();
+    document.getElementById("hasil").innerText = "Data direset";
 }
 </script>
 
