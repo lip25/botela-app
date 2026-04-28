@@ -159,12 +159,17 @@ const HPP = {
     matcha: 6100
 };
 
-// ================= MODAL AMAN (HPP +15%) =================
+// ================= MODAL AMAN (+15%) =================
 const MODAL = {
     americano: 3500,
     kopisusu: 9100,
     matcha: 7100
 };
+
+// ================= PEMBULATAN RIBUAN =================
+function bulatkan(x) {
+    return Math.round(x / 1000) * 1000;
+}
 
 // ================= UI =================
 function updateUI() {
@@ -200,9 +205,9 @@ function hitung() {
         let qty = data[p];
 
         let o = qty * HARGA[p];
-        let m = qty * MODAL[p];
+        let m = bulatkan(qty * MODAL[p]); // modal dibulatkan
         let hpp = qty * HPP[p];
-        let pft = o - hpp;
+        let pft = bulatkan(o - hpp); // profit dibulatkan
 
         omzet += o;
         modal += m;
@@ -212,14 +217,14 @@ function hitung() {
 Qty: ${qty}
 Omzet: Rp${o.toLocaleString()}
 Modal Aman: Rp${m.toLocaleString()}
-Profit Real: Rp${pft.toLocaleString()}
+Profit: Rp${pft.toLocaleString()}
 
 `;
     }
 
     text += `TOTAL OMZET: Rp${omzet.toLocaleString()}
 MODAL WAJIB DISIMPAN: Rp${modal.toLocaleString()}
-PROFIT BERSIH: Rp${profit.toLocaleString()}
+PROFIT: Rp${profit.toLocaleString()}
 `;
 
     document.getElementById("hasil").innerText = text;
