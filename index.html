@@ -1,193 +1,246 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>BOTELA MANAGER</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+body {
+    font-family: 'Inter', sans-serif;
+    background: #000;
+    color: #fff;
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    font-size: 22px;
+}
+
+.container {
+    max-width: 420px;
+    margin: auto;
+}
+
+.card {
+    background: #1c1c1e;
+    border-radius: 16px;
+    padding: 15px;
+    margin-bottom: 12px;
+}
+
+.product {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 12px 0;
+}
+
+.name {
+    font-weight: 600;
+}
+
+.controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.qty {
+    min-width: 30px;
+    text-align: center;
+    font-size: 18px;
+}
+
+button {
+    border: none;
+    border-radius: 10px;
+    padding: 6px 12px;
+    background: #2c2c2e;
+    color: white;
+    font-size: 18px;
+}
+
+button:active {
+    opacity: 0.7;
+}
+
+.primary {
+    background: #0a84ff;
+}
+
+.danger {
+    background: #ff3b30;
+}
+
+.full {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.result {
+    white-space: pre-line;
+    font-size: 14px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>BOTELA MANAGER</h1>
+
+<div class="container">
+
+<div class="card">
+
+<div class="product">
+<div class="name">Americano</div>
+<div class="controls">
+<button onclick="kurang('americano')">−</button>
+<div id="americano" class="qty">0</div>
+<button onclick="tambah('americano')">+</button>
+</div>
+</div>
+
+<div class="product">
+<div class="name">Kopi Susu</div>
+<div class="controls">
+<button onclick="kurang('kopisusu')">−</button>
+<div id="kopisusu" class="qty">0</div>
+<button onclick="tambah('kopisusu')">+</button>
+</div>
+</div>
+
+<div class="product">
+<div class="name">Matcha</div>
+<div class="controls">
+<button onclick="kurang('matcha')">−</button>
+<div id="matcha" class="qty">0</div>
+<button onclick="tambah('matcha')">+</button>
+</div>
+</div>
+
+</div>
+
+<div class="card result" id="hasil">
+Belum ada transaksi
+</div>
+
+<button class="primary full" onclick="hitung()">Hitung</button>
+<button class="danger full" onclick="reset()">Reset</button>
+
+</div>
+
 <script>
 
 // ================= DATA =================
-
-let data = JSON.parse(localStorage.getItem("botelaData")) || {
-    americano:0,
-    kopisusu:0,
-    matcha:0
+let data = JSON.parse(localStorage.getItem("data")) || {
+    americano: 0,
+    kopisusu: 0,
+    matcha: 0
 };
 
-// ================= HARGA JUAL =================
-
+// ================= HARGA =================
 const HARGA = {
-    americano:12000,
-    kopisusu:15000,
-    matcha:15000
+    americano: 12000,
+    kopisusu: 15000,
+    matcha: 15000
 };
 
-// ================= HPP REAL BOTELA =================
-
-// AMERICANO
-// kopi 3g = 1733
-// botol = 750
-// stiker = 350
-// total = 2833
-
-// KOPI SUSU
-// kopi 3g = 1733
-// susu 140ml = 3220
-// skm 8ml = 224
-// creamer 3g = 240
-// gula aren 15ml = 600
-// botol = 750
-// stiker = 350
-// total = 7117
-
-// MATCHA
-// matcha 15g = 795
-// susu 140ml = 3220
-// botol = 750
-// stiker = 350
-// total = 5115
-
+// ================= HPP ASLI =================
 const HPP = {
-    americano:2833,
-    kopisusu:7117,
-    matcha:5115
+    americano: 3000,
+    kopisusu: 7900,
+    matcha: 6100
 };
 
-// ================= MODAL AMAN +15% =================
-
+// ================= MODAL AMAN (+15%) =================
 const MODAL = {
-    americano:3250,
-    kopisusu:8200,
-    matcha:5900
+    americano: 3500,
+    kopisusu: 9100,
+    matcha: 7100
 };
 
-// ================= FORMAT =================
-
-function rupiah(x){
-    return "Rp" + Math.round(x).toLocaleString("id-ID");
+// ================= PEMBULATAN RIBUAN =================
+function bulatkan(x) {
+    return Math.round(x / 1000) * 1000;
 }
 
-// ================= UPDATE UI =================
-
-function updateUI(){
-
+// ================= UI =================
+function updateUI() {
     document.getElementById("americano").innerText = data.americano;
     document.getElementById("kopisusu").innerText = data.kopisusu;
     document.getElementById("matcha").innerText = data.matcha;
-
-    let total =
-        data.americano +
-        data.kopisusu +
-        data.matcha;
-
-    document.getElementById("totalBotol").innerText =
-    "Total Botol: " + total;
 }
-
 updateUI();
 
-// ================= SAVE =================
-
-function save(){
-    localStorage.setItem("botelaData", JSON.stringify(data));
+// ================= CONTROL =================
+function tambah(p) {
+    data[p]++;
+    save();
+}
+function kurang(p) {
+    if (data[p] > 0) data[p]--;
+    save();
+}
+function save() {
+    localStorage.setItem("data", JSON.stringify(data));
     updateUI();
 }
 
-// ================= CONTROL =================
-
-function tambah(menu){
-    data[menu]++;
-    save();
-}
-
-function kurang(menu){
-    if(data[menu] > 0){
-        data[menu]--;
-        save();
-    }
-}
-
 // ================= HITUNG =================
-
-function hitung(){
-
+function hitung() {
     let omzet = 0;
     let modal = 0;
     let profit = 0;
-    let totalBotol = 0;
 
-    let hasil = "";
+    let text = "";
 
-    const nama = {
-        americano:"Americano",
-        kopisusu:"Kopi Susu",
-        matcha:"Matcha"
-    };
-
-    for(let p in data){
-
+    for (let p in data) {
         let qty = data[p];
 
-        if(qty <= 0) continue;
-
         let o = qty * HARGA[p];
-        let m = qty * MODAL[p];
+        let m = bulatkan(qty * MODAL[p]); // modal dibulatkan
         let hpp = qty * HPP[p];
-        let pft = o - hpp;
+        let pft = bulatkan(o - hpp); // profit dibulatkan
 
         omzet += o;
         modal += m;
         profit += pft;
-        totalBotol += qty;
 
-        hasil +=
-`${nama[p]}
+        text += `${p.toUpperCase()}
 Qty: ${qty}
-Omzet: ${rupiah(o)}
-Modal Simpan: ${rupiah(m)}
-Profit: ${rupiah(pft)}
+Omzet: Rp${o.toLocaleString()}
+Modal Aman: Rp${m.toLocaleString()}
+Profit: Rp${pft.toLocaleString()}
 
 `;
     }
 
-    if(totalBotol === 0){
+    text += `TOTAL OMZET: Rp${omzet.toLocaleString()}
+MODAL WAJIB DISIMPAN: Rp${modal.toLocaleString()}
+PROFIT: Rp${profit.toLocaleString()}
+`;
 
-        document.getElementById("hasil").innerText =
-        "Belum ada transaksi";
-
-        return;
-    }
-
-    hasil +=
-`━━━━━━━━━━
-
-TOTAL BOTOL
-${totalBotol}
-
-TOTAL OMZET
-${rupiah(omzet)}
-
-MODAL WAJIB DISIMPAN
-${rupiah(modal)}
-
-PROFIT BERSIH
-${rupiah(profit)}`;
-
-    document.getElementById("hasil").innerText = hasil;
+    document.getElementById("hasil").innerText = text;
 }
 
 // ================= RESET =================
+function reset() {
+    if (!confirm("Reset data?")) return;
 
-function resetData(){
-
-    let yakin = confirm("Reset semua data transaksi?");
-
-    if(!yakin) return;
-
-    data = {
-        americano:0,
-        kopisusu:0,
-        matcha:0
-    };
-
+    data = {americano:0,kopisusu:0,matcha:0};
     save();
 
-    document.getElementById("hasil").innerText =
-    "Belum ada transaksi";
+    document.getElementById("hasil").innerText = "Data direset";
 }
 
 </script>
+
+</body>
+</html>
