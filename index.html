@@ -127,21 +127,6 @@ button:active{
     font-size:13px;
 }
 
-.green{
-    color:#22c55e;
-    font-weight:bold;
-}
-
-.blue{
-    color:#60a5fa;
-    font-weight:bold;
-}
-
-.yellow{
-    color:#facc15;
-    font-weight:bold;
-}
-
 </style>
 </head>
 
@@ -260,6 +245,11 @@ function rupiah(x){
     return "Rp" + x.toLocaleString("id-ID");
 }
 
+// ================= BULATKAN KE RIBUAN =================
+function bulatRibuan(x){
+    return Math.ceil(x / 1000) * 1000;
+}
+
 // ================= UPDATE UI =================
 function updateUI(){
 
@@ -335,10 +325,10 @@ Omzet:
 ${rupiah(o)}
 
 Modal Produksi:
-${rupiah(h)}
+${rupiah(bulatRibuan(h))}
 
 Profit Bersih:
-${rupiah(pr)}
+${rupiah(bulatRibuan(pr))}
 
 ====================
 
@@ -346,17 +336,17 @@ ${rupiah(pr)}
     }
 
     // ================= BAGI PROFIT =================
-    let pribadi = Math.floor(profit / 2);
-    let simpanModal = profit - pribadi;
+    let pribadi = bulatRibuan(profit / 2);
+    let simpanModal = bulatRibuan(profit / 2);
 
     text += `💰 TOTAL OMZET
-${rupiah(omzet)}
+${rupiah(bulatRibuan(omzet))}
 
 📦 TOTAL MODAL PRODUKSI
-${rupiah(modal)}
+${rupiah(bulatRibuan(modal))}
 
 🟢 TOTAL PROFIT BERSIH
-${rupiah(profit)}
+${rupiah(bulatRibuan(profit))}
 
 ====================
 
