@@ -120,16 +120,26 @@ button:active{
     font-size:15px;
 }
 
-.total{
-    color:#22c55e;
-    font-weight:bold;
-}
-
 .footer{
     text-align:center;
     color:#6b7280;
     margin-top:20px;
     font-size:13px;
+}
+
+.green{
+    color:#22c55e;
+    font-weight:bold;
+}
+
+.blue{
+    color:#60a5fa;
+    font-weight:bold;
+}
+
+.yellow{
+    color:#facc15;
+    font-weight:bold;
 }
 
 </style>
@@ -140,7 +150,7 @@ button:active{
 <h1>BOTELA MANAGER</h1>
 
 <div class="subtitle">
-Coffee Business Calculator
+Coffee Business Profit Tracker
 </div>
 
 <div class="container">
@@ -153,7 +163,7 @@ Coffee Business Calculator
 <div>
 <div class="name">☕ Americano</div>
 <div class="price">
-Jual Rp10.000
+Jual Rp12.000
 </div>
 </div>
 
@@ -169,7 +179,7 @@ Jual Rp10.000
 <div class="product">
 
 <div>
-<div class="name">🥛 Kopi Susu</div>
+<div class="name">🥛 Kopi Susu Aren</div>
 <div class="price">
 Jual Rp15.000
 </div>
@@ -189,7 +199,7 @@ Jual Rp15.000
 <div>
 <div class="name">🍵 Matcha</div>
 <div class="price">
-Jual Rp12.000
+Jual Rp15.000
 </div>
 </div>
 
@@ -217,7 +227,7 @@ Belum ada transaksi
 </button>
 
 <div class="footer">
-BOTELA • Profit Tracker
+BOTELA • Business Manager
 </div>
 
 </div>
@@ -233,23 +243,16 @@ let data = JSON.parse(localStorage.getItem("botelaData")) || {
 
 // ================= HARGA JUAL =================
 const HARGA = {
-    americano:10000,
+    americano:12000,
     kopisusu:15000,
-    matcha:12000
+    matcha:15000
 };
 
-// ================= HPP TERBARU =================
+// ================= HPP =================
 const HPP = {
     americano:2153,
     kopisusu:7198,
     matcha:5944
-};
-
-// ================= MODAL AMAN =================
-const MODAL = {
-    americano:2500,
-    kopisusu:8000,
-    matcha:6500
 };
 
 // ================= FORMAT RUPIAH =================
@@ -310,18 +313,17 @@ function hitung(){
         let qty = data[p];
 
         let o = qty * HARGA[p];
-        let m = qty * MODAL[p];
         let h = qty * HPP[p];
         let pr = o - h;
 
         omzet += o;
-        modal += m;
+        modal += h;
         profit += pr;
 
         let nama = "";
 
         if(p === "americano") nama = "☕ AMERICANO";
-        if(p === "kopisusu") nama = "🥛 KOPI SUSU";
+        if(p === "kopisusu") nama = "🥛 KOPI SUSU AREN";
         if(p === "matcha") nama = "🍵 MATCHA";
 
         text += `${nama}
@@ -332,8 +334,8 @@ ${qty}
 Omzet:
 ${rupiah(o)}
 
-Modal Aman:
-${rupiah(m)}
+Modal Produksi:
+${rupiah(h)}
 
 Profit Bersih:
 ${rupiah(pr)}
@@ -343,14 +345,26 @@ ${rupiah(pr)}
 `;
     }
 
+    // ================= BAGI PROFIT =================
+    let pribadi = Math.floor(profit / 2);
+    let simpanModal = profit - pribadi;
+
     text += `💰 TOTAL OMZET
 ${rupiah(omzet)}
 
-📦 TOTAL MODAL
+📦 TOTAL MODAL PRODUKSI
 ${rupiah(modal)}
 
-🟢 TOTAL PROFIT
+🟢 TOTAL PROFIT BERSIH
 ${rupiah(profit)}
+
+====================
+
+🧍 UANG PRIBADI
+${rupiah(pribadi)}
+
+🏦 DISIMPAN UNTUK MODAL
+${rupiah(simpanModal)}
 `;
 
     document.getElementById("hasil").innerText = text;
