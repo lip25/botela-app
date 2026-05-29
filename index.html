@@ -1,18 +1,20 @@
-<!DOCTYPE html>
+from pathlib import Path
+
+html = """<!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BOTELA Finance</title>
 <style>
 body{font-family:Arial,sans-serif;background:#111827;color:#fff;margin:0;padding:20px}
 .card{background:#1f2937;padding:15px;border-radius:12px;margin-bottom:15px}
-input{width:100%;padding:10px;margin-top:5px;background:#374151;color:#fff;border:none;border-radius:8px}
-button{padding:10px 15px;border:none;border-radius:8px;cursor:pointer;font-weight:bold}
+input{width:100%;padding:10px;margin:5px 0 12px;border:none;border-radius:8px;background:#374151;color:#fff;box-sizing:border-box}
+button{padding:10px 15px;border:none;border-radius:8px;font-weight:bold;cursor:pointer}
 .btn{background:#f59e0b;color:#000}
-.btn-delete{background:#dc2626;color:#fff}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
-h1{text-align:center}
+.del{background:#dc2626;color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.result{font-size:28px;font-weight:bold}
 table{width:100%;border-collapse:collapse}
 th,td{border:1px solid #374151;padding:8px;text-align:center}
 </style>
@@ -22,40 +24,42 @@ th,td{border:1px solid #374151;padding:8px;text-align:center}
 <h1>BOTELA Finance</h1>
 
 <div class="card">
-<h3>Penjualan Hari Ini</h3>
+<h3>Input Penjualan</h3>
 
 <label>Americano (Rp12.000)</label>
-<input type="number" id="americano" value="0">
+<input type="number" id="americano" value="0" min="0">
 
 <label>Kopi Susu Aren (Rp15.000)</label>
-<input type="number" id="kopsuren" value="0">
+<input type="number" id="kopsuren" value="0" min="0">
 
 <label>Matcha (Rp15.000)</label>
-<input type="number" id="matcha" value="0">
+<input type="number" id="matcha" value="0" min="0">
 
-<br><br>
-<button class="btn" onclick="hitung()">Hitung & Simpan</button>
+<button class="btn" onclick="hitungDanSimpan()">Hitung & Simpan</button>
 </div>
 
 <div class="grid">
-<div class="card"><h3>Omzet</h3><div id="omzet">Rp0</div></div>
-<div class="card"><h3>Modal (HPP)</h3><div id="modal">Rp0</div></div>
-<div class="card"><h3>Laba</h3><div id="laba">Rp0</div></div>
-<div class="card"><h3>Uang Pribadi (30%)</h3><div id="pribadi">Rp0</div></div>
-<div class="card"><h3>Dana Usaha (70%)</h3><div id="usaha">Rp0</div></div>
+<div class="card">
+<h3>💰 Uang Modal</h3>
+<div id="modal" class="result">Rp0</div>
 </div>
 
 <div class="card">
-<h3>Riwayat Penjualan</h3>
-<button class="btn-delete" onclick="hapusSemua()">Hapus Semua Riwayat</button>
-<br><br>
+<h3>💵 Uang Pribadi</h3>
+<div id="pribadi" class="result">Rp0</div>
+</div>
+</div>
 
+<div class="card">
+<h3>Riwayat Tersimpan</h3>
+<button class="del" onclick="hapusSemua()">Hapus Semua Riwayat</button>
+<br><br>
 <table>
 <thead>
 <tr>
-<th>Tanggal</th>
-<th>Omzet</th>
-<th>Laba</th>
+<th>Tanggal & Jam</th>
+<th>Uang Modal</th>
+<th>Uang Pribadi</th>
 <th>Aksi</th>
 </tr>
 </thead>
@@ -68,76 +72,73 @@ const harga={americano:12000,kopsuren:15000,matcha:15000};
 const hpp={americano:4520,kopsuren:8750,matcha:5987};
 
 function rupiah(n){
- return "Rp"+n.toLocaleString("id-ID");
+ return "Rp"+Math.round(n).toLocaleString("id-ID");
 }
 
-function hitung(){
- let a=+document.getElementById("americano").value||0;
- let k=+document.getElementById("kopsuren").value||0;
- let m=+document.getElementById("matcha").value||0;
+function hitungDanSimpan(){
+ const a=parseInt(document.getElementById('americano').value)||0;
+ const k=parseInt(document.getElementById('kopsuren').value)||0;
+ const m=parseInt(document.getElementById('matcha').value)||0;
 
- let omzet=(a*harga.americano)+(k*harga.kopsuren)+(m*harga.matcha);
- let modal=(a*hpp.americano)+(k*hpp.kopsuren)+(m*hpp.matcha);
- let laba=omzet-modal;
- let pribadi=Math.round(laba*0.30);
- let usaha=Math.round(laba*0.70);
+ const omzet=(a*harga.americano)+(k*harga.kopsuren)+(m*harga.matcha);
+ const modalTerpakai=(a*hpp.americano)+(k*hpp.kopsuren)+(m*hpp.matcha);
+ const laba=omzet-modalTerpakai;
 
- document.getElementById("omzet").innerText=rupiah(omzet);
- document.getElementById("modal").innerText=rupiah(modal);
- document.getElementById("laba").innerText=rupiah(laba);
- document.getElementById("pribadi").innerText=rupiah(pribadi);
- document.getElementById("usaha").innerText=rupiah(usaha);
+ const uangModal=modalTerpakai+(laba*0.70);
+ const uangPribadi=laba*0.30;
 
- let data=JSON.parse(localStorage.getItem("botelaData")||"[]");
+ document.getElementById('modal').textContent=rupiah(uangModal);
+ document.getElementById('pribadi').textContent=rupiah(uangPribadi);
+
+ let data=JSON.parse(localStorage.getItem('botelaData') || '[]');
 
  data.unshift({
-   tanggal:new Date().toLocaleDateString("id-ID"),
-   omzet:omzet,
-   laba:laba
+   waktu:new Date().toLocaleString('id-ID'),
+   modal:uangModal,
+   pribadi:uangPribadi
  });
 
- localStorage.setItem("botelaData",JSON.stringify(data));
+ localStorage.setItem('botelaData', JSON.stringify(data));
  tampilRiwayat();
 }
 
-function hapusData(index){
- let data=JSON.parse(localStorage.getItem("botelaData")||"[]");
+function tampilRiwayat(){
+ const data=JSON.parse(localStorage.getItem('botelaData') || '[]');
+ const tbody=document.getElementById('riwayat');
+ tbody.innerHTML='';
 
- if(confirm("Hapus data ini?")){
-   data.splice(index,1);
-   localStorage.setItem("botelaData",JSON.stringify(data));
-   tampilRiwayat();
- }
+ data.forEach((item,index)=>{
+   tbody.innerHTML += `
+   <tr>
+   <td>${item.waktu}</td>
+   <td>${rupiah(item.modal)}</td>
+   <td>${rupiah(item.pribadi)}</td>
+   <td><button class="del" onclick="hapusData(${index})">Hapus</button></td>
+   </tr>`;
+ });
+}
+
+function hapusData(index){
+ let data=JSON.parse(localStorage.getItem('botelaData') || '[]');
+ data.splice(index,1);
+ localStorage.setItem('botelaData', JSON.stringify(data));
+ tampilRiwayat();
 }
 
 function hapusSemua(){
- if(confirm("Yakin ingin menghapus semua riwayat?")){
-   localStorage.removeItem("botelaData");
+ if(confirm('Hapus semua riwayat?')){
+   localStorage.removeItem('botelaData');
    tampilRiwayat();
  }
 }
 
-function tampilRiwayat(){
- let data=JSON.parse(localStorage.getItem("botelaData")||"[]");
- let html="";
-
- data.forEach((d,index)=>{
-   html += `
-   <tr>
-     <td>${d.tanggal}</td>
-     <td>${rupiah(d.omzet)}</td>
-     <td>${rupiah(d.laba)}</td>
-     <td>
-       <button class="btn-delete" onclick="hapusData(${index})">Hapus</button>
-     </td>
-   </tr>`;
- });
-
- document.getElementById("riwayat").innerHTML=html;
-}
-
-tampilRiwayat();
+window.onload=tampilRiwayat;
 </script>
 
 </body>
 </html>
+"""
+
+path="/mnt/data/index.html"
+Path(path).write_text(html, encoding="utf-8")
+print(path)
