@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BOTELA Finance</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:#0f172a;color:white;padding:20px}
+h1{text-align:center;color:#f59e0b;margin-bottom:20px}
+.card{background:#1e293b;padding:15px;border-radius:15px;margin-bottom:15px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px}
+label{display:block;margin:10px 0 5px}
+input{width:100%;padding:10px;border:none;border-radius:8px;background:#334155;color:white}
+button{border:none;padding:10px 15px;border-radius:8px;cursor:pointer;font-weight:bold}
+.btn{background:#f59e0b;color:black;margin-top:10px}
+.btn-danger{background:#dc2626;color:white}
+.value{font-size:24px;font-weight:bold;margin-top:10px}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th,td{border:1px solid #334155;padding:8px;text-align:center}
+th{background:#334155}
+</style>
+</head>
+<body>
+
+<h1>BOTELA FINANCE</h1>
+
+<div class="card">
+<h3>Penjualan</h3>
+
+<label>Americano (Rp12.000)</label>
+<input type="number" id="americano" value="0">
+
+<label>Kopi Susu Aren (Rp15.000)</label>
+<input type="number" id="kopsuren" value="0">
+
+<label>Matcha (Rp15.000)</label>
+<input type="number" id="matcha" value="0">
+
+<button class="btn" onclick="simpanPenjualan()">Simpan Penjualan</button>
+</div>
+
+<div class="card">
+<h3>Pengeluaran Modal</h3>
+
+<label>Nama Bahan</label>
+<input type="text" id="namaBahan" placeholder="Contoh: Kopi Arabika">
+
+<label>Nominal Pengeluaran</label>
+<input type="number" id="nominalBahan" placeholder="Contoh: 50000">
+
+<button class="btn" onclick="simpanPengeluaran()">Simpan Pengeluaran</button>
+</div>
+
+<div class="grid">
+<div class="card">
+<h3>💰 Modal Terkumpul</h3>
+<div id="totalModal" class="value">Rp0</div>
+</div>
+
+<div class="card">
+<h3>💵 Uang Pribadi</h3>
+<div id="totalPribadi" class="value">Rp0</div>
+</div>
+
+<div class="card">
+<h3>📦 Total Pengeluaran</h3>
+<div id="totalPengeluaran" class="value">Rp0</div>
+</div>
+
+<div class="card">
+<h3>🏦 Modal Bersih</h3>
+<div id="modalBersih" class="value">Rp0</div>
+</div>
+</div>
+
+<div class="card">
+<h3>Riwayat Penjualan</h3>
+<button class="btn-danger" onclick="hapusSemuaPenjualan()">Hapus Semua Penjualan</button>
+
+<table>
+<thead>
+<tr>
+<th>Tanggal</th>
+<th>Modal</th>
+<th>Pribadi</th>
+<th>Aksi</th>
+</tr>
+</thead>
+<tbody id="riwayatPenjualan"></tbody>
+</table>
+</div>
+
+<div class="card">
+<h3>Riwayat Pengeluaran</h3>
+<button class="btn-danger" onclick="hapusSemuaPengeluaran()">Hapus Semua Pengeluaran</button>
+
+<table>
+<thead>
+<tr>
+<th>Tanggal</th>
+<th>Bahan</th>
+<th>Nominal</th>
+<th>Aksi</th>
+</tr>
+</thead>
+<tbody id="riwayatPengeluaran"></tbody>
+</table>
+</div>
+
+<script>
+const harga={americano:12000,kopsuren:15000,matcha:15000};
+const hpp={americano:4520,kopsuren:8750,matcha:5987};
+
+function rupiah(n){
+return "Rp"+Math.round(n).toLocaleString("id-ID");
+}
+
+function simpanPenjualan(){
+let a=parseInt(document.getElementById("americano").value)||0;
+let k=parseInt(document.getElementById("kopsuren").value)||0;
+let m=parseInt(document.getElementById("matcha").value)||0;
+
+if(a===0&&k===0&&m===0){alert("Masukkan penjualan.");return;}
+
+let omzet=(a*harga.americano)+(k*harga.kopsuren)+(m*harga.matcha);
+let modalTerpakai=(a*hpp.americano)+(k*hpp.kopsuren)+(m*hpp.matcha);
+let laba=omzet-modalTerpakai;
+
+let uangModal=modalTerpakai+(laba*0.5);
+let uangPribadi=laba*0.5;
+
+let data=JSON.parse(localStorage.getItem("botelaData"))||[];
+
+data.unshift({
+tanggal:new Date().toLocaleString("id-ID"),
+modal:Math.round(uangModal),
+pribadi:Math.round(uangPribadi)
+});
+
+localStorage.setItem("botelaData",JSON.stringify(data));
+
+document.getElementById("americano").value=0;
+document.getElementById("kopsuren").value=0;
+document.getElementById("matcha").value=0;
+
+loadData();
+}
+
+function simpanPengeluaran(){
+let bahan=document.getElementById("namaBahan").value.trim();
+let nominal=parseInt(document.getElementById("nominalBahan").value)||0;
+
+if(!bahan||nominal<=0){
+alert("Isi nama bahan dan nominal.");
+return;
+}
+
+let data=JSON.parse(localStorage.getItem("botelaPengeluaran"))||[];
+
+data.unshift({
+tanggal:new Date().toLocaleString("id-ID"),
+bahan:bahan,
+nominal:nominal
+});
+
+localStorage.setItem("botelaPengeluaran",JSON.stringify(data));
+
+document.getElementById("namaBahan").value="";
+document.getElementById("nominalBahan").value="";
+
+loadData();
+}
+
+function hapusPenjualan(i){
+let data=JSON.parse(localStorage.getItem("botelaData"))||[];
+data.splice(i,1);
+localStorage.setItem("botelaData",JSON.stringify(data));
+loadData();
+}
+
+function hapusPengeluaran(i){
+let data=JSON.parse(localStorage.getItem("botelaPengeluaran"))||[];
+data.splice(i,1);
+localStorage.setItem("botelaPengeluaran",JSON.stringify(data));
+loadData();
+}
+
+function hapusSemuaPenjualan(){
+if(confirm("Hapus semua penjualan?")){
+localStorage.removeItem("botelaData");
+loadData();
+}
+}
+
+function hapusSemuaPengeluaran(){
+if(confirm("Hapus semua pengeluaran?")){
+localStorage.removeItem("botelaPengeluaran");
+loadData();
+}
+}
+
+function loadData(){
+
+let penjualan=JSON.parse(localStorage.getItem("botelaData"))||[];
+let pengeluaran=JSON.parse(localStorage.getItem("botelaPengeluaran"))||[];
+
+let totalModal=0;
+let totalPribadi=0;
+
+let htmlPenjualan="";
+
+penjualan.forEach((item,i)=>{
+totalModal+=item.modal;
+totalPribadi+=item.pribadi;
+
+htmlPenjualan+=`
+<tr>
+<td>${item.tanggal}</td>
+<td>${rupiah(item.modal)}</td>
+<td>${rupiah(item.pribadi)}</td>
+<td><button class="btn-danger" onclick="hapusPenjualan(${i})">Hapus</button></td>
+</tr>`;
+});
+
+document.getElementById("riwayatPenjualan").innerHTML=htmlPenjualan;
+
+let totalPengeluaran=0;
+let htmlPengeluaran="";
+
+pengeluaran.forEach((item,i)=>{
+totalPengeluaran+=item.nominal;
+
+htmlPengeluaran+=`
+<tr>
+<td>${item.tanggal}</td>
+<td>${item.bahan}</td>
+<td>${rupiah(item.nominal)}</td>
+<td><button class="btn-danger" onclick="hapusPengeluaran(${i})">Hapus</button></td>
+</tr>`;
+});
+
+document.getElementById("riwayatPengeluaran").innerHTML=htmlPengeluaran;
+
+document.getElementById("totalModal").innerHTML=rupiah(totalModal);
+document.getElementById("totalPribadi").innerHTML=rupiah(totalPribadi);
+document.getElementById("totalPengeluaran").innerHTML=rupiah(totalPengeluaran);
+document.getElementById("modalBersih").innerHTML=rupiah(totalModal-totalPengeluaran);
+}
+
+loadData();
+</script>
+
+</body>
+</html>
