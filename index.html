@@ -1,966 +1,553 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BOTELA Finance Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --border-color: rgba(148, 163, 184, 0.2);
+            --primary: #f59e0b;
+            --primary-hover: #d97706;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --warning-soft: rgba(245, 158, 11, 0.15);
+            --radius-xl: 24px;
+            --radius-lg: 16px;
+        }
 
-<meta charset="UTF-8">
+        html, body {
+            touch-action: manipulation;
+        }
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-<title>BOTELA Finance</title>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(at 10% 10%, rgba(245, 158, 11, 0.1) 0px, transparent 50%),
+                radial-gradient(at 90% 90%, rgba(30, 58, 138, 0.2) 0px, transparent 50%);
+            color: var(--text-main);
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            line-height: 1.6;
+        }
 
+        .main-container {
+            width: 100%;
+            max-width: 520px;
+            margin-top: 10px;
+            margin-bottom: 40px;
+        }
 
-<style>
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif
-}
+        header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+            text-shadow: 0 2px 10px rgba(245, 158, 11, 0.3);
+        }
 
+        header p {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
 
-body{
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px -10px rgba(0,0,0,0.3);
+        }
 
-background:#0f172a;
-color:white;
-padding:20px
+        .card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-}
+        .card h3 i {
+            color: var(--primary);
+        }
 
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
 
-h1{
+        .grid .card {
+            margin-bottom: 0;
+            padding: 20px;
+            text-align: center;
+        }
 
-text-align:center;
-color:#f59e0b;
-margin-bottom:20px
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-align: left;
+        }
 
-}
+        input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid transparent;
+            border-radius: var(--radius-lg);
+            background: #0f172a;
+            color: white;
+            font-size: 16px;
+            font-family: 'Poppins', sans-serif;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
 
+        input:focus {
+            border-color: var(--primary);
+            background: #1e293b;
+            box-shadow: 0 0 0 4px var(--warning-soft);
+        }
 
-.card{
+        button {
+            border: none;
+            padding: 14px 20px;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+        }
 
-background:#1e293b;
-padding:15px;
-border-radius:15px;
-margin-bottom:15px
+        button:active {
+            transform: scale(0.97);
+        }
 
-}
+        .btn {
+            background: var(--primary);
+            color: #0f172a;
+        }
 
+        .btn:hover {
+            background: var(--primary-hover);
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        }
 
-.grid{
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+            width: auto;
+            padding: 8px 12px;
+            font-size: 13px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
 
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:15px
+        .btn-danger:hover {
+            background: #dc2626;
+        }
 
-}
+        .value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-top: 5px;
+            word-break: break-word;
+        }
 
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-top: 10px;
+        }
 
-label{
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            text-align: left;
+            white-space: nowrap;
+        }
 
-display:block;
-margin:10px 0 5px
+        th, td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
 
-}
+        th {
+            background: #0f172a;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
 
+        tr:last-child td {
+            border-bottom: none;
+        }
 
-input{
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
 
-width:100%;
-padding:10px;
-border:none;
-border-radius:8px;
-background:#334155;
-color:white
+        .empty-state {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 20px;
+            font-style: italic;
+        }
 
-}
+        footer {
+            margin-top: auto;
+            color: #475569;
+            font-size: 13px;
+            text-align: center;
+        }
 
-
-button{
-
-border:none;
-padding:10px 15px;
-border-radius:8px;
-cursor:pointer;
-font-weight:bold
-
-}
-
-
-.btn{
-
-background:#f59e0b;
-color:black;
-margin-top:10px
-
-}
-
-
-.btn-danger{
-
-background:#dc2626;
-color:white
-
-}
-
-
-.value{
-
-font-size:24px;
-font-weight:bold;
-margin-top:10px
-
-}
-
-
-table{
-
-width:100%;
-border-collapse:collapse;
-margin-top:10px
-
-}
-
-
-th,td{
-
-border:1px solid #334155;
-padding:8px;
-text-align:center
-
-}
-
-
-th{
-
-background:#334155
-
-}
-
-
-</style>
-
+        @media (max-width: 480px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
-
-
 
 <body>
 
+<div class="main-container">
+    <header>
+        <h1>Botela Finance</h1>
+        <p>Financial & Production Capital Management</p>
+    </header>
 
-<h1>BOTELA FINANCE</h1>
+    <!-- KARTU PENJUALAN -->
+    <div class="card">
+        <h3><i class="fas fa-cash-register"></i> Input Penjualan Harian</h3>
+        
+        <label>☕ Americano (Rp12.000)</label>
+        <input type="number" id="americano" value="0" min="0" inputmode="numeric">
 
+        <label>🥛 Kopi Susu Aren (Rp15.000)</label>
+        <input type="number" id="kopsuren" value="0" min="0" inputmode="numeric">
 
+        <label>🍵 Matcha (Rp15.000)</label>
+        <input type="number" id="matcha" value="0" min="0" inputmode="numeric">
 
-<div class="card">
+        <button class="btn" onclick="simpanPenjualan()">
+            <i class="fas fa-save"></i> Simpan Penjualan
+        </button>
+    </div>
 
-<h3>Penjualan</h3>
+    <!-- KARTU PENGELUARAN -->
+    <div class="card">
+        <h3><i class="fas fa-wallet"></i> Pengeluaran Modal / Bahan</h3>
+        
+        <label>Nama Bahan / Keperluan</label>
+        <input type="text" id="namaBahan" placeholder="Contoh: Susu UHT 1 Liter">
 
+        <label>Nominal Pengeluaran (Rp)</label>
+        <input type="number" id="nominalBahan" placeholder="Contoh: 50000" min="0" inputmode="numeric">
 
-<label>Americano (Rp12.000)</label>
+        <button class="btn" onclick="simpanPengeluaran()">
+            <i class="fas fa-plus-circle"></i> Simpan Pengeluaran
+        </button>
+    </div>
 
-<input type="number" id="americano" value="0">
+    <!-- RINGKASAN KEUANGAN -->
+    <div class="grid">
+        <div class="card">
+            <label style="text-align: center;">Modal Terkumpul</label>
+            <div id="totalModal" class="value">Rp 0</div>
+        </div>
 
+        <div class="card">
+            <label style="text-align: center;">Uang Pribadi</label>
+            <div id="totalPribadi" class="value">Rp 0</div>
+        </div>
 
+        <div class="card">
+            <label style="text-align: center;">Total Pengeluaran</label>
+            <div id="totalPengeluaran" class="value" style="color: #ef4444;">Rp 0</div>
+        </div>
 
-<label>Kopi Susu Aren (Rp15.000)</label>
+        <div class="card">
+            <label style="text-align: center;">Modal Bersih</label>
+            <div id="modalBersih" class="value" style="color: #38bdf8;">Rp 0</div>
+        </div>
+    </div>
 
-<input type="number" id="kopsuren" value="0">
+    <!-- RIWAYAT PENJUALAN -->
+    <div class="card">
+        <h3><i class="fas fa-history"></i> Riwayat Penjualan</h3>
+        <button class="btn-danger" onclick="hapusSemuaPenjualan()">
+            <i class="fas fa-trash-alt"></i> Hapus Semua Riwayat
+        </button>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Waktu</th>
+                        <th>Modal</th>
+                        <th>Pribadi</th>
+                        <th style="text-align: center;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="riwayatPenjualan">
+                    <tr><td colspan="4" class="empty-state">Belum ada riwayat penjualan</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-
-
-<label>Matcha (Rp15.000)</label>
-
-<input type="number" id="matcha" value="0">
-
-
-
-<button class="btn" onclick="simpanPenjualan()">
-
-Simpan Penjualan
-
-</button>
-
-
+    <!-- RIWAYAT PENGELUARAN -->
+    <div class="card">
+        <h3><i class="fas fa-receipt"></i> Riwayat Pengeluaran</h3>
+        <button class="btn-danger" onclick="hapusSemuaPengeluaran()">
+            <i class="fas fa-trash-alt"></i> Hapus Semua Riwayat
+        </button>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Waktu</th>
+                        <th>Keterangan</th>
+                        <th>Nominal</th>
+                        <th style="text-align: center;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="riwayatPengeluaran">
+                    <tr><td colspan="4" class="empty-state">Belum ada riwayat pengeluaran</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
-
-
-
-
-<div class="card">
-
-<h3>Pengeluaran Modal</h3>
-
-
-<label>Nama Bahan</label>
-
-<input type="text" id="namaBahan"
-placeholder="Contoh: Susu UHT">
-
-
-
-<label>Nominal Pengeluaran</label>
-
-<input type="number" id="nominalBahan"
-placeholder="Contoh: 50000">
-
-
-
-<button class="btn" onclick="simpanPengeluaran()">
-
-Simpan Pengeluaran
-
-</button>
-
-
-</div>
-
-
-
-
-
-
-
-<div class="grid">
-
-
-<div class="card">
-
-<h3>💰 Modal Terkumpul</h3>
-
-<div id="totalModal" class="value">
-Rp0
-</div>
-
-</div>
-
-
-
-<div class="card">
-
-<h3>💵 Uang Pribadi</h3>
-
-<div id="totalPribadi" class="value">
-Rp0
-</div>
-
-</div>
-
-
-
-
-<div class="card">
-
-<h3>📦 Total Pengeluaran</h3>
-
-<div id="totalPengeluaran" class="value">
-Rp0
-</div>
-
-</div>
-
-
-
-
-<div class="card">
-
-<h3>🏦 Modal Bersih</h3>
-
-<div id="modalBersih" class="value">
-Rp0
-</div>
-
-</div>
-
-
-
-</div>
-
-
-
-
-
-
-
-
-<div class="card">
-
-
-<h3>Riwayat Penjualan</h3>
-
-
-<button class="btn-danger"
-onclick="hapusSemuaPenjualan()">
-
-Hapus Semua Penjualan
-
-</button>
-
-
-
-<table>
-
-
-<thead>
-
-<tr>
-
-<th>Tanggal</th>
-
-<th>Modal</th>
-
-<th>Pribadi</th>
-
-<th>Aksi</th>
-
-</tr>
-
-
-</thead>
-
-
-<tbody id="riwayatPenjualan"></tbody>
-
-
-</table>
-
-
-</div>
-
-
-
-
-
-
-
-
-
-<div class="card">
-
-
-<h3>Riwayat Pengeluaran</h3>
-
-
-
-<button class="btn-danger"
-onclick="hapusSemuaPengeluaran()">
-
-Hapus Semua Pengeluaran
-
-</button>
-
-
-
-<table>
-
-
-<thead>
-
-<tr>
-
-<th>Tanggal</th>
-
-<th>Bahan</th>
-
-<th>Nominal</th>
-
-<th>Aksi</th>
-
-</tr>
-
-
-</thead>
-
-
-<tbody id="riwayatPengeluaran"></tbody>
-
-
-</table>
-
-
-
-</div>
-
-
-
-
-
-
+<footer>
+    BOTELA Finance &copy; 2026
+</footer>
 
 <script>
-
-
-const harga={
-
-americano:12000,
-
-kopsuren:15000,
-
-matcha:15000
-
+const harga = {
+    americano: 12000,
+    kopsuren: 15000,
+    matcha: 15000
 };
-
-
 
 // HPP TERBARU
-
-const hpp={
-
-americano:2500,
-
-kopsuren:7860,
-
-matcha:5700
-
+const hpp = {
+    americano: 2500,
+    kopsuren: 7860,
+    matcha: 5700
 };
 
-
-
-
-
-function rupiah(n){
-
-return "Rp"+Math.round(n)
-.toLocaleString("id-ID");
-
+function rupiah(n) {
+    return "Rp " + Math.round(n).toLocaleString("id-ID");
 }
 
+function simpanPenjualan() {
+    let a = parseInt(document.getElementById("americano").value) || 0;
+    let k = parseInt(document.getElementById("kopsuren").value) || 0;
+    let m = parseInt(document.getElementById("matcha").value) || 0;
 
+    if (a === 0 && k === 0 && m === 0) {
+        alert("Masukkan jumlah penjualan terlebih dahulu!");
+        return;
+    }
 
+    let omzet = (a * harga.americano) + (k * harga.kopsuren) + (m * harga.matcha);
+    let modalProduksi = (a * hpp.americano) + (k * hpp.kopsuren) + (m * hpp.matcha);
+    let laba = omzet - modalProduksi;
 
+    let uangModal = modalProduksi + (laba * 0.5);
+    let uangPribadi = laba * 0.5;
 
+    let data = JSON.parse(localStorage.getItem("botelaData")) || [];
 
+    data.unshift({
+        tanggal: new Date().toLocaleString("id-ID"),
+        modal: Math.round(uangModal),
+        pribadi: Math.round(uangPribadi)
+    });
 
-function simpanPenjualan(){
+    localStorage.setItem("botelaData", JSON.stringify(data));
 
+    document.getElementById("americano").value = 0;
+    document.getElementById("kopsuren").value = 0;
+    document.getElementById("matcha").value = 0;
 
-let a=parseInt(
-document.getElementById("americano").value
-)||0;
-
-
-let k=parseInt(
-document.getElementById("kopsuren").value
-)||0;
-
-
-let m=parseInt(
-document.getElementById("matcha").value
-)||0;
-
-
-
-
-if(a===0&&k===0&&m===0){
-
-alert("Masukkan penjualan");
-
-return;
-
+    loadData();
 }
 
+function simpanPengeluaran() {
+    let bahan = document.getElementById("namaBahan").value.trim();
+    let nominal = parseInt(document.getElementById("nominalBahan").value) || 0;
 
+    if (!bahan || nominal <= 0) {
+        alert("Isi nama bahan dan nominal pengeluaran dengan benar!");
+        return;
+    }
 
+    let data = JSON.parse(localStorage.getItem("botelaPengeluaran")) || [];
 
+    data.unshift({
+        tanggal: new Date().toLocaleString("id-ID"),
+        bahan: bahan,
+        nominal: nominal
+    });
 
-let omzet=
+    localStorage.setItem("botelaPengeluaran", JSON.stringify(data));
 
-(a*harga.americano)+
-(k*harga.kopsuren)+
-(m*harga.matcha);
+    document.getElementById("namaBahan").value = "";
+    document.getElementById("nominalBahan").value = "";
 
+    loadData();
+}
 
+function hapusPenjualan(i) {
+    let data = JSON.parse(localStorage.getItem("botelaData")) || [];
+    data.splice(i, 1);
+    localStorage.setItem("botelaData", JSON.stringify(data));
+    loadData();
+}
 
+function hapusPengeluaran(i) {
+    let data = JSON.parse(localStorage.getItem("botelaPengeluaran")) || [];
+    data.splice(i, 1);
+    localStorage.setItem("botelaPengeluaran", JSON.stringify(data));
+    loadData();
+}
 
+function hapusSemuaPenjualan() {
+    if (confirm("Yakin ingin menghapus seluruh riwayat penjualan?")) {
+        localStorage.removeItem("botelaData");
+        loadData();
+    }
+}
 
-let modalProduksi=
+function hapusSemuaPengeluaran() {
+    if (confirm("Yakin ingin menghapus seluruh riwayat pengeluaran?")) {
+        localStorage.removeItem("botelaPengeluaran");
+        loadData();
+    }
+}
 
-(a*hpp.americano)+
-(k*hpp.kopsuren)+
-(m*hpp.matcha);
+function loadData() {
+    let penjualan = JSON.parse(localStorage.getItem("botelaData")) || [];
+    let pengeluaran = JSON.parse(localStorage.getItem("botelaPengeluaran")) || [];
 
+    let totalModal = 0;
+    let totalPribadi = 0;
+    let htmlPenjualan = "";
 
+    if (penjualan.length === 0) {
+        htmlPenjualan = `<tr><td colspan="4" class="empty-state">Belum ada riwayat penjualan</td></tr>`;
+    } else {
+        penjualan.forEach((item, i) => {
+            totalModal += item.modal;
+            totalPribadi += item.pribadi;
 
+            htmlPenjualan += `
+                <tr>
+                    <td>${item.tanggal}</td>
+                    <td>${rupiah(item.modal)}</td>
+                    <td>${rupiah(item.pribadi)}</td>
+                    <td style="text-align: center;">
+                        <button class="btn-danger" style="margin-bottom:0;" onclick="hapusPenjualan(${i})">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
 
+    document.getElementById("riwayatPenjualan").innerHTML = htmlPenjualan;
 
-let laba=
+    let totalPengeluaran = 0;
+    let htmlPengeluaran = "";
 
-omzet-modalProduksi;
+    if (pengeluaran.length === 0) {
+        htmlPengeluaran = `<tr><td colspan="4" class="empty-state">Belum ada riwayat pengeluaran</td></tr>`;
+    } else {
+        pengeluaran.forEach((item, i) => {
+            totalPengeluaran += item.nominal;
 
+            htmlPengeluaran += `
+                <tr>
+                    <td>${item.tanggal}</td>
+                    <td>${item.bahan}</td>
+                    <td>${rupiah(item.nominal)}</td>
+                    <td style="text-align: center;">
+                        <button class="btn-danger" style="margin-bottom:0;" onclick="hapusPengeluaran(${i})">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
 
+    document.getElementById("riwayatPengeluaran").innerHTML = htmlPengeluaran;
 
-
-
-let uangModal=
-
-modalProduksi+(laba*0.5);
-
-
-
-let uangPribadi=
-
-laba*0.5;
-
-
-
-
-
-
-let data=
-
-JSON.parse(
-localStorage.getItem("botelaData")
-)||[];
-
-
-
-
-
-data.unshift({
-
-tanggal:new Date()
-.toLocaleString("id-ID"),
-
-modal:Math.round(uangModal),
-
-pribadi:Math.round(uangPribadi)
-
-});
-
-
-
-
-
-localStorage.setItem(
-
-"botelaData",
-
-JSON.stringify(data)
-
-);
-
-
-
-
-
-
-document.getElementById("americano").value=0;
-
-document.getElementById("kopsuren").value=0;
-
-document.getElementById("matcha").value=0;
-
-
-
+    document.getElementById("totalModal").innerHTML = rupiah(totalModal);
+    document.getElementById("totalPribadi").innerHTML = rupiah(totalPribadi);
+    document.getElementById("totalPengeluaran").innerHTML = rupiah(totalPengeluaran);
+    document.getElementById("modalBersih").innerHTML = rupiah(totalModal - totalPengeluaran);
+}
 
 loadData();
 
-
-}
-
-
-
-
-
-
-
-
-
-function simpanPengeluaran(){
-
-
-let bahan=
-
-document.getElementById("namaBahan")
-.value.trim();
-
-
-
-
-let nominal=
-
-parseInt(
-document.getElementById("nominalBahan")
-.value
-)||0;
-
-
-
-
-
-if(!bahan || nominal<=0){
-
-alert("Isi bahan dan nominal");
-
-return;
-
-}
-
-
-
-
-
-let data=
-
-JSON.parse(
-localStorage.getItem("botelaPengeluaran")
-)||[];
-
-
-
-
-
-data.unshift({
-
-tanggal:new Date()
-.toLocaleString("id-ID"),
-
-bahan:bahan,
-
-nominal:nominal
-
-});
-
-
-
-
-
-localStorage.setItem(
-
-"botelaPengeluaran",
-
-JSON.stringify(data)
-
-);
-
-
-
-
-document.getElementById("namaBahan").value="";
-
-document.getElementById("nominalBahan").value="";
-
-
-
-loadData();
-
-
-}
-
-
-
-
-
-
-
-
-function hapusPenjualan(i){
-
-
-let data=
-
-JSON.parse(
-localStorage.getItem("botelaData")
-)||[];
-
-data.splice(i,1);
-
-
-localStorage.setItem(
-
-"botelaData",
-
-JSON.stringify(data)
-
-);
-
-
-loadData();
-
-}
-
-
-
-
-
-
-function hapusPengeluaran(i){
-
-
-let data=
-
-JSON.parse(
-localStorage.getItem("botelaPengeluaran")
-)
-||[];
-
-
-data.splice(i,1);
-
-
-localStorage.setItem(
-
-"botelaPengeluaran",
-
-JSON.stringify(data)
-
-);
-
-
-loadData();
-
-
-}
-
-
-
-
-
-
-
-function hapusSemuaPenjualan(){
-
-
-if(confirm("Hapus semua penjualan?")){
-
-
-localStorage.removeItem("botelaData");
-
-
-loadData();
-
-
-}
-
-
-}
-
-
-
-
-
-function hapusSemuaPengeluaran(){
-
-
-if(confirm("Hapus semua pengeluaran?")){
-
-
-localStorage.removeItem("botelaPengeluaran");
-
-
-loadData();
-
-
-}
-
-
-}
-
-
-
-
-
-
-
-
-
-function loadData(){
-
-
-
-let penjualan=
-
-JSON.parse(
-localStorage.getItem("botelaData")
-)
-||[];
-
-
-
-
-let pengeluaran=
-
-JSON.parse(
-localStorage.getItem("botelaPengeluaran")
-)
-||[];
-
-
-
-
-
-let totalModal=0;
-
-let totalPribadi=0;
-
-
-
-let htmlPenjualan="";
-
-
-
-
-
-penjualan.forEach((item,i)=>{
-
-
-totalModal+=item.modal;
-
-totalPribadi+=item.pribadi;
-
-
-
-
-htmlPenjualan+=`
-
-<tr>
-
-<td>${item.tanggal}</td>
-
-<td>${rupiah(item.modal)}</td>
-
-<td>${rupiah(item.pribadi)}</td>
-
-
-<td>
-
-<button class="btn-danger"
-onclick="hapusPenjualan(${i})">
-
-Hapus
-
-</button>
-
-
-</td>
-
-
-</tr>
-
-`;
-
-});
-
-
-
-
-
-document.getElementById(
-"riwayatPenjualan"
-).innerHTML=htmlPenjualan;
-
-
-
-
-
-
-
-let totalPengeluaran=0;
-
-
-let htmlPengeluaran="";
-
-
-
-
-
-pengeluaran.forEach((item,i)=>{
-
-
-totalPengeluaran+=item.nominal;
-
-
-
-
-htmlPengeluaran+=`
-
-<tr>
-
-<td>${item.tanggal}</td>
-
-<td>${item.bahan}</td>
-
-<td>${rupiah(item.nominal)}</td>
-
-
-<td>
-
-<button class="btn-danger"
-onclick="hapusPengeluaran(${i})">
-
-Hapus
-
-</button>
-
-
-</td>
-
-
-</tr>
-
-`;
-
-});
-
-
-
-
-
-document.getElementById(
-"riwayatPengeluaran"
-).innerHTML=htmlPengeluaran;
-
-
-
-
-
-
-
-document.getElementById(
-"totalModal"
-).innerHTML=
-rupiah(totalModal);
-
-
-
-
-document.getElementById(
-"totalPribadi"
-).innerHTML=
-rupiah(totalPribadi);
-
-
-
-
-document.getElementById(
-"totalPengeluaran"
-).innerHTML=
-rupiah(totalPengeluaran);
-
-
-
-
-document.getElementById(
-"modalBersih"
-).innerHTML=
-rupiah(totalModal-totalPengeluaran);
-
-
-
-}
-
-
-
-
-
-loadData();
-
-
+let lastTouch = 0;
+document.addEventListener("touchend", function (event) {
+    let now = new Date().getTime();
+    if (now - lastTouch <= 300) {
+        event.preventDefault();
+    }
+    lastTouch = now;
+}, false);
 </script>
 
-
-
 </body>
-
   </html>
+  
